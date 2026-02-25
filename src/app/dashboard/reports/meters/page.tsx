@@ -27,6 +27,11 @@ export default function MetersReportPage() {
                     <span>ถึง</span>
                     <input type="date" className="form-control" value={dateTo} onChange={e => setDateTo(e.target.value)} style={{ width: "160px" }} />
                     <button className="btn btn-primary" onClick={fetchReport} disabled={loading}>{loading ? "โหลด..." : "🔍 ดูรายงาน"}</button>
+                    {report && (
+                        <button className="btn" style={{ background: "white", color: "black", border: "1px solid #ddd" }} onClick={() => window.open(`/dashboard/reports/meters/print?from=${dateFrom}&to=${dateTo}`, "_blank")}>
+                            🖨️ พิมพ์รายงานสรุปมิเตอร์
+                        </button>
+                    )}
                 </div>
             </div>
 
