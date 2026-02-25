@@ -55,19 +55,23 @@ export default function StockReportPage() {
                                 <th className="td-number">ยอดยกมา (ลิตร)</th>
                                 <th className="td-number">รับเข้า (ลิตร)</th>
                                 <th className="td-number">จ่ายออก (ลิตร)</th>
+                                <th className="td-number">ปรับปรุง/เกลี่ย (ลิตร)</th>
                                 <th className="td-number">คงเหลือ (ลิตร)</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {loading ? <tr><td colSpan={5} className="td-center"><span className="spinner" /></td></tr> :
+                            {loading ? <tr><td colSpan={6} className="td-center"><span className="spinner" /></td></tr> :
                                 (!report || !report.stock || report.stock.length === 0) ?
-                                    <tr><td colSpan={5}><div className="empty-state"><div className="empty-state-icon">🛢️</div><div className="empty-state-title">ยังไม่มีข้อมูลสต็อก</div></div></td></tr> :
+                                    <tr><td colSpan={6}><div className="empty-state"><div className="empty-state-icon">🛢️</div><div className="empty-state-title">ยังไม่มีข้อมูลสต็อก</div></div></td></tr> :
                                     report.stock.map((s: any) => (
                                         <tr key={s.oilType}>
                                             <td style={{ fontWeight: 500 }}>{s.label}</td>
                                             <td className="td-number">{Number(s.openingBalance).toLocaleString("th-TH", { minimumFractionDigits: 2 })}</td>
                                             <td className="td-number" style={{ color: "var(--success)" }}>+{Number(s.incoming).toLocaleString("th-TH", { minimumFractionDigits: 2 })}</td>
                                             <td className="td-number" style={{ color: "var(--danger)" }}>-{Number(s.outgoing).toLocaleString("th-TH", { minimumFractionDigits: 2 })}</td>
+                                            <td className="td-number" style={{ color: Number(s.adjustments) > 0 ? "var(--success)" : Number(s.adjustments) < 0 ? "var(--danger)" : "inherit" }}>
+                                                {Number(s.adjustments) > 0 ? "+" : ""}{Number(s.adjustments).toLocaleString("th-TH", { minimumFractionDigits: 2 })}
+                                            </td>
                                             <td className="td-number" style={{ fontWeight: 700, fontSize: "1rem", color: Number(s.remaining) < 0 ? "var(--danger)" : "var(--primary)" }}>
                                                 {Number(s.remaining).toLocaleString("th-TH", { minimumFractionDigits: 2 })}
                                             </td>

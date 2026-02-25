@@ -95,6 +95,20 @@ export default function NewInvoicePage() {
         setSaving(false);
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter") {
+            const target = e.target as HTMLElement;
+            if (target.tagName === "INPUT" || target.tagName === "SELECT") {
+                e.preventDefault();
+                const formElements = Array.from(document.querySelectorAll("input, select, textarea, button[type='submit']")) as HTMLElement[];
+                const index = formElements.indexOf(target);
+                if (index > -1 && index < formElements.length - 1) {
+                    formElements[index + 1].focus();
+                }
+            }
+        }
+    };
+
     return (
         <div>
             <div className="page-header">
@@ -105,7 +119,7 @@ export default function NewInvoicePage() {
                 <a href="/dashboard/invoices" className="btn btn-secondary">← กลับรายการบิล</a>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
                 {/* Header info */}
                 <div className="card" style={{ marginBottom: "1rem" }}>
                     <div className="card-header"><span className="card-title">ข้อมูลบิล</span></div>

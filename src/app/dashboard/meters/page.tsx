@@ -44,32 +44,19 @@ export default function MetersPage() {
             const res = await fetch(`/api/meters?date=${date}`);
             if (res.ok) {
                 const data = await res.json();
-                if (data.length > 0) {
-                    setRows(data.map((m: any) => ({
-                        id: m.id,
-                        tankNumber: m.tankNumber,
-                        oilType: m.oilType,
-                        startMeter: String(m.startMeter),
-                        endMeter: String(m.endMeter),
-                        liters: String(m.liters),
-                        truckId: m.truckId || "",
-                        note: m.note || "",
-                    })));
-                } else {
-                    initRows();
-                }
+                processApiData(data);
             } else {
-                initRows();
+                processApiData([]);
             }
         } catch (e) {
-            initRows();
+            processApiData([]);
         }
         setLoading(false);
     }, [date]);
 
     useEffect(() => { fetchMeters(); }, [fetchMeters]);
 
-    function initRows() {
+    function processApiData(data: any[]) {
         const defaults: MeterRow[] = [];
         // ถัง 1-8 = ดีเซล, 9-16 = E20, 17-24 = แก๊ส 91, 25-28 = เบนซิน
         const tanks = [
@@ -78,17 +65,37 @@ export default function MetersPage() {
             ...Array.from({ length: 8 }, (_, i) => ({ tank: i + 17, type: "K" })),
             ...Array.from({ length: 4 }, (_, i) => ({ tank: i + 25, type: "B" })),
         ];
+
         for (const t of tanks) {
+            const ext = data.find(d => d.tankNumber === t.tank);
             defaults.push({
+                id: ext?.id,
                 tankNumber: t.tank,
-                oilType: t.type,
-                startMeter: "0",
-                endMeter: "0",
-                liters: "0",
-                truckId: "",
-                note: "",
+                oilType: ext?.oilType || t.type,
+                startMeter: ext ? String(ext.startMeter) : "0",
+                endMeter: ext ? String(ext.endMeter) : "0",
+                liters: ext ? String(ext.liters || "0") : "0",
+                truckId: ext?.truckId || "",
+                note: ext?.note || "",
             });
         }
+
+        // Add any extra tanks not in the standard 28
+        const extraTanks = data.filter(d => !tanks.some(t => t.tank === d.tankNumber));
+        for (const ext of extraTanks) {
+            defaults.push({
+                id: ext.id,
+                tankNumber: ext.tankNumber,
+                oilType: ext.oilType,
+                startMeter: String(ext.startMeter),
+                endMeter: String(ext.endMeter),
+                liters: String(ext.liters || "0"),
+                truckId: ext.truckId || "",
+                note: ext.note || "",
+            });
+        }
+
+        defaults.sort((a, b) => a.tankNumber - b.tankNumber);
         setRows(defaults);
     }
 

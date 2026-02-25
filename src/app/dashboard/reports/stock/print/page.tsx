@@ -75,6 +75,7 @@ function StockReportPrintContent() {
                         <th style={{ border: "1px solid black", padding: "6px" }}>ยอดยกมา (ลิตร)</th>
                         <th style={{ border: "1px solid black", padding: "6px" }}>รับเข้า (ลิตร)</th>
                         <th style={{ border: "1px solid black", padding: "6px" }}>จ่ายออก (ลิตร)</th>
+                        <th style={{ border: "1px solid black", padding: "6px" }}>ปรับปรุง (ลิตร)</th>
                         <th style={{ border: "1px solid black", padding: "6px" }}>คงเหลือ (ลิตร)</th>
                     </tr>
                 </thead>
@@ -83,6 +84,7 @@ function StockReportPrintContent() {
                         totalOpening += Number(s.openingBalance);
                         totalIncoming += Number(s.incoming);
                         totalOutgoing += Number(s.outgoing);
+                        const adjustments = Number(s.adjustments || 0);
                         totalRemaining += Number(s.remaining);
 
                         return (
@@ -92,6 +94,7 @@ function StockReportPrintContent() {
                                 <td style={{ border: "1px solid black", padding: "6px", textAlign: "right" }}>{Number(s.openingBalance).toLocaleString("th-TH", { minimumFractionDigits: 2 })}</td>
                                 <td style={{ border: "1px solid black", padding: "6px", textAlign: "right" }}>{Number(s.incoming).toLocaleString("th-TH", { minimumFractionDigits: 2 })}</td>
                                 <td style={{ border: "1px solid black", padding: "6px", textAlign: "right" }}>{Number(s.outgoing).toLocaleString("th-TH", { minimumFractionDigits: 2 })}</td>
+                                <td style={{ border: "1px solid black", padding: "6px", textAlign: "right" }}>{adjustments > 0 ? "+" : ""}{adjustments.toLocaleString("th-TH", { minimumFractionDigits: 2 })}</td>
                                 <td style={{ border: "1px solid black", padding: "6px", textAlign: "right", fontWeight: "bold" }}>{Number(s.remaining).toLocaleString("th-TH", { minimumFractionDigits: 2 })}</td>
                             </tr>
                         );
@@ -110,6 +113,9 @@ function StockReportPrintContent() {
                         </th>
                         <th style={{ border: "1px solid black", padding: "6px", textAlign: "right", fontWeight: "bold" }}>
                             {totalOutgoing.toLocaleString("th-TH", { minimumFractionDigits: 2 })}
+                        </th>
+                        <th style={{ border: "1px solid black", padding: "6px", textAlign: "right", fontWeight: "bold" }}>
+                            -
                         </th>
                         <th style={{ border: "1px solid black", padding: "6px", textAlign: "right", fontWeight: "bold" }}>
                             {totalRemaining.toLocaleString("th-TH", { minimumFractionDigits: 2 })}

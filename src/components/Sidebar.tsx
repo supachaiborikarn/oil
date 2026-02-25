@@ -17,6 +17,8 @@ const navItems = [
             { href: "/dashboard/oil-prices", icon: "💰", label: "ราคาน้ำมันวันนี้" },
             { href: "/dashboard/invoices", icon: "🧾", label: "ออกบิลขาย" },
             { href: "/dashboard/purchases", icon: "🚛", label: "รับน้ำมันเข้า" },
+            { href: "/dashboard/stocks/tanks", icon: "📏", label: "ไม้หยั่งถัง" },
+            { href: "/dashboard/stocks/adjustments", icon: "⚖️", label: "เกลี่ยยอดน้ำมัน" },
         ],
     },
     {

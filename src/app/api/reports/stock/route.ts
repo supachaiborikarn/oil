@@ -50,7 +50,19 @@ export async function GET(req: NextRequest) {
                 _sum: { liters: true }
             });
 
-            const openingBalance = Number(pastPurchases._sum?.liters || 0) - Number(pastMeters._sum?.liters || 0);
+            // Adjustments before start date
+            const pastAdjustments = await prisma.stockAdjustment.aggregate({
+                where: {
+                    oilType: oilType as any,
+                    date: { lt: start },
+                    officeId
+                },
+                _sum: { liters: true }
+            });
+
+            const openingBalance = Number(pastPurchases._sum?.liters || 0)
+                - Number(pastMeters._sum?.liters || 0)
+                + Number(pastAdjustments._sum?.liters || 0);
 
             // 2. Calculate current month
             const currentPurchases = await prisma.purchaseItem.aggregate({
@@ -70,9 +82,19 @@ export async function GET(req: NextRequest) {
                 _sum: { liters: true }
             });
 
+            const currentAdjustments = await prisma.stockAdjustment.aggregate({
+                where: {
+                    oilType: oilType as any,
+                    date: { gte: start, lte: end },
+                    officeId
+                },
+                _sum: { liters: true }
+            });
+
             const incoming = Number(currentPurchases._sum?.liters || 0);
             const outgoing = Number(currentMeters._sum?.liters || 0);
-            const remaining = openingBalance + incoming - outgoing;
+            const adjustments = Number(currentAdjustments._sum?.liters || 0);
+            const remaining = openingBalance + incoming - outgoing + adjustments;
 
             result.push({
                 oilType,
@@ -80,6 +102,7 @@ export async function GET(req: NextRequest) {
                 openingBalance,
                 incoming,
                 outgoing,
+                adjustments,
                 remaining
             });
         }
