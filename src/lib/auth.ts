@@ -37,17 +37,24 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 token.role = (user as any).role;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 token.officeId = (user as any).officeId;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 token.officeName = (user as any).officeName;
             }
             return token;
         },
         async session({ session, token }) {
             if (session.user) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (session.user as any).id = token.sub;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (session.user as any).role = token.role;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (session.user as any).officeId = token.officeId;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (session.user as any).officeName = token.officeName;
             }
             return session;

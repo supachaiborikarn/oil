@@ -62,14 +62,14 @@ export default function Sidebar() {
 
             {session?.user && (
                 <div className="sidebar-office">
-                    สาขา: <span>{(session.user as any).officeName || "—"}</span>
+                    สาขา: <span>{((session.user as unknown) as Record<string, unknown>).officeName as string || "—"}</span>
                 </div>
             )}
 
             <nav className="sidebar-nav">
                 {navItems.map((group) => {
                     // Hide "ตั้งค่า" section for STAFF
-                    if (group.section === "ตั้งค่า" && (session?.user as any)?.role === "STAFF") {
+                    if (group.section === "ตั้งค่า" && ((session?.user as unknown) as Record<string, unknown>)?.role === "STAFF") {
                         return null;
                     }
 

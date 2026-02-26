@@ -4,16 +4,14 @@ import { useSession } from "next-auth/react";
 
 export default function UsersPage() {
     const { data: session } = useSession();
-    const [users, setUsers] = useState<any[]>([]);
+    const [users, setUsers] = useState<Record<string, unknown>[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
-    const [editing, setEditing] = useState<any>(null);
+    const [editing, setEditing] = useState<Record<string, unknown> | null>(null);
     const [form, setForm] = useState({ name: "", email: "", password: "", role: "STAFF", active: true });
 
     // Only Admin & Manager can view this page
-    const canManageUsers = (session?.user as any)?.role === "ADMIN" || (session?.user as any)?.role === "SUPERADMIN";
-
-    useEffect(() => { fetchData(); }, []);
+    const canManageUsers = (session?.user as Record<string, unknown>)?.role === "ADMIN" || (session?.user as Record<string, unknown>)?.role === "SUPERADMIN";
 
     async function fetchData() {
         setLoading(true);
@@ -24,6 +22,8 @@ export default function UsersPage() {
         setLoading(false);
     }
 
+    useEffect(() => { fetchData(); }, []);
+
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         const method = editing ? "PUT" : "POST";
@@ -32,7 +32,7 @@ export default function UsersPage() {
         // Remove password if it's empty during edit
         const payload = { ...form };
         if (editing && !payload.password) {
-            delete (payload as any).password;
+            delete (payload as Record<string, unknown>).password;
         }
 
         const res = await fetch(url, {
@@ -61,6 +61,7 @@ export default function UsersPage() {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function openEdit(u: any) {
         setEditing(u);
         setForm({ name: u.name, email: u.email, password: "", role: u.role, active: u.active });
@@ -122,35 +123,40 @@ export default function UsersPage() {
                                         <div className="empty-state-title">ยังไม่มีข้อมูล</div>
                                     </div>
                                 </td></tr>
-                            ) : users.map(u => (
-                                <tr key={u.id} className={!u.active ? "opacity-50" : ""}>
-                                    <td style={{ fontWeight: 500 }}>{u.name}</td>
-                                    <td>{u.email}</td>
-                                    <td>
-                                        <span className="badge" style={{ backgroundColor: roleColors[u.role] + "20", color: roleColors[u.role] }}>
-                                            {roleLabels[u.role] || u.role}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span className={`badge ${u.active ? "badge-success" : "badge-secondary"}`}>
-                                            {u.active ? "เปิดใช้งาน" : "ปิดใช้งาน"}
-                                        </span>
-                                    </td>
-                                    <td style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
-                                        {new Date(u.createdAt).toLocaleDateString("th-TH")}
-                                    </td>
-                                    {canManageUsers && (
-                                        <td className="td-center">
-                                            <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}>
-                                                <button className="btn btn-ghost btn-sm" onClick={() => openEdit(u)}>✏️</button>
-                                                {(session?.user as any)?.id !== u.id && (
-                                                    <button className="btn btn-ghost btn-sm" onClick={() => handleDelete(u.id)} style={{ color: "var(--danger)" }}>🗑️</button>
-                                                )}
-                                            </div>
+                            ) : users.map(userItem => {
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                const u: any = userItem;
+                                return (
+                                    <tr key={u.id} className={!u.active ? "opacity-50" : ""}>
+                                        <td style={{ fontWeight: 500 }}>{u.name}</td>
+                                        <td>{u.email}</td>
+                                        <td>
+                                            <span className="badge" style={{ backgroundColor: roleColors[u.role] + "20", color: roleColors[u.role] }}>
+                                                {roleLabels[u.role] || u.role}
+                                            </span>
                                         </td>
-                                    )}
-                                </tr>
-                            ))}
+                                        <td>
+                                            <span className={`badge ${u.active ? "badge-success" : "badge-secondary"}`}>
+                                                {u.active ? "เปิดใช้งาน" : "ปิดใช้งาน"}
+                                            </span>
+                                        </td>
+                                        <td style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
+                                            {new Date(u.createdAt).toLocaleDateString("th-TH")}
+                                        </td>
+                                        {canManageUsers && (
+                                            <td className="td-center">
+                                                <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}>
+                                                    <button className="btn btn-ghost btn-sm" onClick={() => openEdit(u)}>✏️</button>
+                                                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                                    {(session?.user as any)?.id !== u.id && (
+                                                        <button className="btn btn-ghost btn-sm" onClick={() => handleDelete(u.id)} style={{ color: "var(--danger)" }}>🗑️</button>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        )}
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>
