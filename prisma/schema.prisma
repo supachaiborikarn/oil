@@ -46,20 +46,20 @@ model VerificationToken {
 }
 
 model User {
-  id           String    @id @default(cuid())
-  name         String?
-  email        String?   @unique
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
   emailVerified DateTime?
-  image        String?
-  password     String?
-  role         UserRole  @default(STAFF)
-  active       Boolean   @default(true)
-  officeId     String?
-  office       Office?   @relation(fields: [officeId], references: [id])
-  accounts     Account[]
-  sessions     Session[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  image         String?
+  password      String?
+  role          UserRole  @default(STAFF)
+  active        Boolean   @default(true)
+  officeId      String?
+  office        Office?   @relation(fields: [officeId], references: [id])
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 enum UserRole {
@@ -74,26 +74,26 @@ enum UserRole {
 // ==============================
 
 model Office {
-  id          String     @id @default(cuid())
-  code        String     @unique
-  name        String
-  address     String?
-  taxId       String?
-  phone       String?
-  discordWebhook String?
-  active      Boolean    @default(true)
-  users       User[]
-  customers   Customer[]
-  suppliers   Supplier[]
-  invoices    Invoice[]
-  purchases   Purchase[]
-  stockEntries StockEntry[]
-  meterReadings MeterReading[]
-  oilPrices   OilPrice[]
-  tankDipRecords TankDipRecord[]
+  id               String            @id @default(cuid())
+  code             String            @unique
+  name             String
+  address          String?
+  taxId            String?
+  phone            String?
+  discordWebhook   String?
+  active           Boolean           @default(true)
+  users            User[]
+  customers        Customer[]
+  suppliers        Supplier[]
+  invoices         Invoice[]
+  purchases        Purchase[]
+  stockEntries     StockEntry[]
+  meterReadings    MeterReading[]
+  oilPrices        OilPrice[]
+  tankDipRecords   TankDipRecord[]
   stockAdjustments StockAdjustment[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 }
 
 // ==============================
@@ -109,7 +109,7 @@ model Customer {
   taxId     String?
   phone     String?
   totalDebt Decimal   @default(0) @db.Decimal(14, 2)
-  type      String?   // "1" = นิติบุคคล, "2" = บุคคลธรรมดา
+  type      String? // "1" = นิติบุคคล, "2" = บุคคลธรรมดา
   active    Boolean   @default(true)
   officeId  String
   office    Office    @relation(fields: [officeId], references: [id])
@@ -128,7 +128,7 @@ model Supplier {
   taxId     String?
   phone     String?
   vatRate   Decimal    @default(7) @db.Decimal(5, 2)
-  vatType   String?    // Y/N
+  vatType   String? // Y/N
   active    Boolean    @default(true)
   officeId  String
   office    Office     @relation(fields: [officeId], references: [id])
@@ -140,30 +140,30 @@ model Supplier {
 }
 
 model Product {
-  id          String         @id @default(cuid())
-  code        String         @unique
-  name        String
-  oilType     OilType        // ประเภทน้ำมัน
-  buyPrice    Decimal        @default(0) @db.Decimal(10, 4)
-  salePrice   Decimal        @default(0) @db.Decimal(10, 4)
-  sendPrice   Decimal        @default(0) @db.Decimal(10, 4)
-  unit        String         @default("ลิตร")
-  hasVat      Boolean        @default(false)
-  active      Boolean        @default(true)
-  invoiceItems InvoiceItem[]
+  id            String         @id @default(cuid())
+  code          String         @unique
+  name          String
+  oilType       OilType // ประเภทน้ำมัน
+  buyPrice      Decimal        @default(0) @db.Decimal(10, 4)
+  salePrice     Decimal        @default(0) @db.Decimal(10, 4)
+  sendPrice     Decimal        @default(0) @db.Decimal(10, 4)
+  unit          String         @default("ลิตร")
+  hasVat        Boolean        @default(false)
+  active        Boolean        @default(true)
+  invoiceItems  InvoiceItem[]
   purchaseItems PurchaseItem[]
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 }
 
 enum OilType {
-  D  // ดีเซล Diesel (B10, B7, Power Diesel)
-  B  // เบนซิน Benzin
-  E  // แก๊สโซฮอล์ E20
-  K  // แก๊สโซฮอล์ 91/95
-  N  // NGV
-  S  // Super Diesel
-  O  // อื่นๆ
+  D // ดีเซล Diesel (B10, B7, Power Diesel)
+  B // เบนซิน Benzin
+  E // แก๊สโซฮอล์ E20
+  K // แก๊สโซฮอล์ 91/95
+  N // NGV
+  S // Super Diesel
+  O // อื่นๆ
 }
 
 // ==============================
@@ -171,26 +171,26 @@ enum OilType {
 // ==============================
 
 model OilPrice {
-  id         String   @id @default(cuid())
-  date       DateTime @db.Date
-  officeId   String
-  office     Office   @relation(fields: [officeId], references: [id])
+  id              String   @id @default(cuid())
+  date            DateTime @db.Date
+  officeId        String
+  office          Office   @relation(fields: [officeId], references: [id])
   // ราคาขาย (กรอกมือ — ราคาต่างจังหวัดต่างจาก กทม.)
-  dieselSale    Decimal? @db.Decimal(10, 4)
-  benzinSale    Decimal? @db.Decimal(10, 4)
-  e20Sale       Decimal? @db.Decimal(10, 4)
-  gas91Sale     Decimal? @db.Decimal(10, 4)
-  gas95Sale     Decimal? @db.Decimal(10, 4)
+  dieselSale      Decimal? @db.Decimal(10, 4)
+  benzinSale      Decimal? @db.Decimal(10, 4)
+  e20Sale         Decimal? @db.Decimal(10, 4)
+  gas91Sale       Decimal? @db.Decimal(10, 4)
+  gas95Sale       Decimal? @db.Decimal(10, 4)
   powerDieselSale Decimal? @db.Decimal(10, 4)
   // ราคาซื้อ/ต้นทุน (auto-sync จาก Caltex Bizpoint)
-  dieselCost    Decimal? @db.Decimal(10, 4)
-  benzinCost    Decimal? @db.Decimal(10, 4)
-  e20Cost       Decimal? @db.Decimal(10, 4)
-  gas91Cost     Decimal? @db.Decimal(10, 4)
-  gas95Cost     Decimal? @db.Decimal(10, 4)
+  dieselCost      Decimal? @db.Decimal(10, 4)
+  benzinCost      Decimal? @db.Decimal(10, 4)
+  e20Cost         Decimal? @db.Decimal(10, 4)
+  gas91Cost       Decimal? @db.Decimal(10, 4)
+  gas95Cost       Decimal? @db.Decimal(10, 4)
   powerDieselCost Decimal? @db.Decimal(10, 4)
-  caltexSynced Boolean  @default(false)
-  createdAt  DateTime @default(now())
+  caltexSynced    Boolean  @default(false)
+  createdAt       DateTime @default(now())
 
   @@unique([date, officeId])
 }
@@ -200,19 +200,19 @@ model OilPrice {
 // ==============================
 
 model MeterReading {
-  id          String   @id @default(cuid())
-  date        DateTime @db.Date
-  officeId    String
-  office      Office   @relation(fields: [officeId], references: [id])
-  tankNumber  Int      // เบอร์ถัง 1-40
-  truckId     String?  // รหัสรถ/ทะเบียน
-  oilType     OilType
-  startMeter  Decimal  @db.Decimal(14, 2) // เลขมิเตอร์เริ่ม
-  endMeter    Decimal  @db.Decimal(14, 2) // เลขมิเตอร์จบ
-  liters      Decimal  @db.Decimal(14, 2) // ลิตร = endMeter - startMeter
-  note        String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(cuid())
+  date       DateTime @db.Date
+  officeId   String
+  office     Office   @relation(fields: [officeId], references: [id])
+  tankNumber Int // เบอร์ถัง 1-40
+  truckId    String? // รหัสรถ/ทะเบียน
+  oilType    OilType
+  startMeter Decimal  @db.Decimal(14, 2) // เลขมิเตอร์เริ่ม
+  endMeter   Decimal  @db.Decimal(14, 2) // เลขมิเตอร์จบ
+  liters     Decimal  @db.Decimal(14, 2) // ลิตร = endMeter - startMeter
+  note       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@unique([date, officeId, tankNumber])
 }
@@ -222,26 +222,26 @@ model MeterReading {
 // ==============================
 
 model Invoice {
-  id          String        @id @default(cuid())
-  invoiceNo   String
-  date        DateTime      @db.Date
-  customerId  String
-  customer    Customer      @relation(fields: [customerId], references: [id])
-  officeId    String
-  office      Office        @relation(fields: [officeId], references: [id])
-  items       InvoiceItem[]
-  subtotal    Decimal       @db.Decimal(14, 2)
-  discount    Decimal       @default(0) @db.Decimal(14, 2)
-  vatRate     Decimal       @default(7) @db.Decimal(5, 2)
-  vatAmount   Decimal       @db.Decimal(14, 2)
-  total       Decimal       @db.Decimal(14, 2)
-  isPaid      Boolean       @default(false)
-  paidDate    DateTime?     @db.Date
-  paidAmount  Decimal?      @db.Decimal(14, 2)
-  note        String?
-  billType    String        @default("1") // 1=ใบแจ้งหนี้, 2=ใบกำกับภาษี
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id         String        @id @default(cuid())
+  invoiceNo  String
+  date       DateTime      @db.Date
+  customerId String
+  customer   Customer      @relation(fields: [customerId], references: [id])
+  officeId   String
+  office     Office        @relation(fields: [officeId], references: [id])
+  items      InvoiceItem[]
+  subtotal   Decimal       @db.Decimal(14, 2)
+  discount   Decimal       @default(0) @db.Decimal(14, 2)
+  vatRate    Decimal       @default(7) @db.Decimal(5, 2)
+  vatAmount  Decimal       @db.Decimal(14, 2)
+  total      Decimal       @db.Decimal(14, 2)
+  isPaid     Boolean       @default(false)
+  paidDate   DateTime?     @db.Date
+  paidAmount Decimal?      @db.Decimal(14, 2)
+  note       String?
+  billType   String        @default("1") // 1=ใบแจ้งหนี้, 2=ใบกำกับภาษี
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
 
   @@unique([invoiceNo, officeId])
 }
@@ -266,36 +266,36 @@ model InvoiceItem {
 // ==============================
 
 model Purchase {
-  id          String         @id @default(cuid())
-  purchaseNo  String?
-  date        DateTime       @db.Date
-  supplierId  String
-  supplier    Supplier       @relation(fields: [supplierId], references: [id])
-  officeId    String
-  office      Office         @relation(fields: [officeId], references: [id])
-  items       PurchaseItem[]
-  subtotal    Decimal        @db.Decimal(14, 2)
-  vatAmount   Decimal        @db.Decimal(14, 2)
-  total       Decimal        @db.Decimal(14, 2)
-  isPaid      Boolean        @default(false)
-  paidDate    DateTime?      @db.Date
-  note        String?
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id         String         @id @default(cuid())
+  purchaseNo String?
+  date       DateTime       @db.Date
+  supplierId String
+  supplier   Supplier       @relation(fields: [supplierId], references: [id])
+  officeId   String
+  office     Office         @relation(fields: [officeId], references: [id])
+  items      PurchaseItem[]
+  subtotal   Decimal        @db.Decimal(14, 2)
+  vatAmount  Decimal        @db.Decimal(14, 2)
+  total      Decimal        @db.Decimal(14, 2)
+  isPaid     Boolean        @default(false)
+  paidDate   DateTime?      @db.Date
+  note       String?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
 }
 
 model PurchaseItem {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   purchaseId  String
-  purchase    Purchase  @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  purchase    Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
   productId   String?
-  product     Product?  @relation(fields: [productId], references: [id])
+  product     Product? @relation(fields: [productId], references: [id])
   description String
   oilType     OilType?
-  liters      Decimal   @db.Decimal(14, 2)
-  unitPrice   Decimal   @db.Decimal(10, 4)
-  amount      Decimal   @db.Decimal(14, 2)
-  sequence    Int       @default(0)
+  liters      Decimal  @db.Decimal(14, 2)
+  unitPrice   Decimal  @db.Decimal(10, 4)
+  amount      Decimal  @db.Decimal(14, 2)
+  sequence    Int      @default(0)
 }
 
 // ==============================
@@ -303,17 +303,17 @@ model PurchaseItem {
 // ==============================
 
 model StockEntry {
-  id          String      @id @default(cuid())
-  date        DateTime    @db.Date
+  id          String   @id @default(cuid())
+  date        DateTime @db.Date
   officeId    String
-  office      Office      @relation(fields: [officeId], references: [id])
+  office      Office   @relation(fields: [officeId], references: [id])
   oilType     OilType
   tankNumber  Int?
-  openQty     Decimal     @db.Decimal(14, 2) // ยกมา
-  purchaseQty Decimal     @default(0) @db.Decimal(14, 2) // รับเข้า
-  saleQty     Decimal     @default(0) @db.Decimal(14, 2) // จำหน่าย
-  closeQty    Decimal     @db.Decimal(14, 2) // คงเหลือ
-  createdAt   DateTime    @default(now())
+  openQty     Decimal  @db.Decimal(14, 2) // ยกมา
+  purchaseQty Decimal  @default(0) @db.Decimal(14, 2) // รับเข้า
+  saleQty     Decimal  @default(0) @db.Decimal(14, 2) // จำหน่าย
+  closeQty    Decimal  @db.Decimal(14, 2) // คงเหลือ
+  createdAt   DateTime @default(now())
 
   @@unique([date, officeId, oilType, tankNumber])
 }
@@ -323,18 +323,18 @@ model StockEntry {
 // ==============================
 
 model TankDipRecord {
-  id          String   @id @default(cuid())
-  date        DateTime @db.Date // วันที่จด
-  officeId    String
-  office      Office   @relation(fields: [officeId], references: [id])
-  tankNumber  Int      // เบอร์ถัง
-  oilType     OilType
-  dipLevel    Decimal? @db.Decimal(10, 2) // ระดับไม้หยั่ง (มม./ซม. แล้วแต่หน่วย)
-  volume      Decimal  @db.Decimal(14, 2) // ปริมาตรลิตรที่แปลงจากไม้หยั่ง
-  waterLevel  Decimal? @db.Decimal(10, 2) // ระดับน้ำก้นถัง (ถ้ามี)
-  note        String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(cuid())
+  date       DateTime @db.Date // วันที่จด
+  officeId   String
+  office     Office   @relation(fields: [officeId], references: [id])
+  tankNumber Int // เบอร์ถัง
+  oilType    OilType
+  dipLevel   Decimal? @db.Decimal(10, 2) // ระดับไม้หยั่ง (มม./ซม. แล้วแต่หน่วย)
+  volume     Decimal  @db.Decimal(14, 2) // ปริมาตรลิตรที่แปลงจากไม้หยั่ง
+  waterLevel Decimal? @db.Decimal(10, 2) // ระดับน้ำก้นถัง (ถ้ามี)
+  note       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@unique([date, officeId, tankNumber])
 }
@@ -344,13 +344,13 @@ model TankDipRecord {
 // ==============================
 
 model StockAdjustment {
-  id          String   @id @default(cuid())
-  date        DateTime @db.Date // วันที่เกิดการเกลี่ยยอด
-  officeId    String
-  office      Office   @relation(fields: [officeId], references: [id])
-  oilType     OilType
-  liters      Decimal  @db.Decimal(14, 2) // ยาน้ำมันที่ปรับ (ค่าบวก=เพิ่ม, ค่าลบ=ลด)
-  reason      String?  // สาเหตุ เช่น "ปรับให้ตรงไม้หยั่ง", "ระเหย"
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  date      DateTime @db.Date // วันที่เกิดการเกลี่ยยอด
+  officeId  String
+  office    Office   @relation(fields: [officeId], references: [id])
+  oilType   OilType
+  liters    Decimal  @db.Decimal(14, 2) // ยาน้ำมันที่ปรับ (ค่าบวก=เพิ่ม, ค่าลบ=ลด)
+  reason    String? // สาเหตุ เช่น "ปรับให้ตรงไม้หยั่ง", "ระเหย"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
