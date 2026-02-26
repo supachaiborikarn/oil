@@ -50,7 +50,8 @@ export async function GET(req: Request) {
             where: {
                 date: { gte: targetDate, lt: nextDate },
                 officeId
-            }
+            },
+            include: { items: true }
         });
 
         // ยอดจ่ายออก (ดึงจาก InvoiceItems)
@@ -76,17 +77,25 @@ export async function GET(req: Request) {
 
         // Group by Oil Type for Part B Summary
         const basicOilTypes = [
-            { id: "DIESEL", label: "ดีเซล" },
-            { id: "DIESEL_B7", label: "ดีเซล B7" },
-            { id: "G95", label: "แก๊สโซฮอล์ 95" },
-            { id: "G91", label: "แก๊สโซฮอล์ 91" },
-            { id: "E20", label: "E20" },
-            { id: "BENZIN", label: "เบนซิน 95" },
+            { id: "D", label: "ดีเซล" },
+            { id: "S", label: "ดีเซล พาวเวอร์" },
+            { id: "K", label: "แก๊สโซฮอล์ 91/95" },
+            { id: "E", label: "E20" },
+            { id: "B", label: "เบนซิน" },
         ];
 
         const partB_stock = basicOilTypes.map(oil => {
-            // Find Total purchases for this oil
-            const incoming = purchases.filter((p: any) => p.oilType === oil.id).reduce((sum: number, p: any) => sum + Number(p.liters), 0);
+            // Find Total purchases for this oil (from PurchaseItems)
+            let incoming = 0;
+            purchases.forEach((p: any) => {
+                if (p.items) {
+                    p.items.forEach((item: any) => {
+                        if (item.oilType === oil.id) {
+                            incoming += Number(item.liters);
+                        }
+                    });
+                }
+            });
 
             // Find total sales for this oil
             let outgoing = 0;

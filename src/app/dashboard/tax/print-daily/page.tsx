@@ -71,7 +71,7 @@ function DailyReportPrintContent() {
                            <td style={{ border: "1px solid black", padding: "4px", textAlign: "center" }}>{m.oilType}</td>
                            <td style={{ border: "1px solid black", padding: "4px", textAlign: "right" }}>{Number(m.startMeter).toLocaleString("th-TH", { minimumFractionDigits: 2 })}</td>
                            <td style={{ border: "1px solid black", padding: "4px", textAlign: "right" }}>{Number(m.endMeter).toLocaleString("th-TH", { minimumFractionDigits: 2 })}</td>
-                           <td style={{ border: "1px solid black", padding: "4px", textAlign: "right", fontWeight: "bold" }}>{Number(m.litersSold).toLocaleString("th-TH", { minimumFractionDigits: 2 })}</td>
+                           <td style={{ border: "1px solid black", padding: "4px", textAlign: "right", fontWeight: "bold" }}>{Number(m.liters).toLocaleString("th-TH", { minimumFractionDigits: 2 })}</td>
                         </tr>
                      ))
                   )}
