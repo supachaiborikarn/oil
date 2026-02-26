@@ -37,6 +37,7 @@ const navItems = [
             { href: "/dashboard/reports/vat", icon: "📋", label: "ภาษี VAT" },
             { href: "/dashboard/reports/stock", icon: "🛢️", label: "สต็อกน้ำมัน" },
             { href: "/dashboard/reports/debt", icon: "⚠️", label: "ยอดค้างชำระ" },
+            { href: "/dashboard/tax", icon: "📁", label: "เอกสารทางบัญชี/ภาษี" },
         ],
     },
     {
