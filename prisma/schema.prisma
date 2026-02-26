@@ -224,6 +224,7 @@ model MeterReading {
 model Invoice {
   id         String        @id @default(cuid())
   invoiceNo  String
+  bookNo     String?       // เล่มที่
   date       DateTime      @db.Date
   customerId String
   customer   Customer      @relation(fields: [customerId], references: [id])
